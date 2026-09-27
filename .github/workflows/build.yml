@@ -22,10 +22,15 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # "tools" 这个旧版 SDK 组件已经被 Google 从仓库下架，
+          # 继续指定它会导致 sdkmanager 直接报错退出（Failed to find package 'tools'）。
+          # 现在只需要 platform-tools；build-tools/platform 由 AGP 在构建时按
+          # compileSdk 自动下载（前面的 accept-android-sdk-licenses 已经把许可证过了）。
+          packages: platform-tools
 
       # 用官方 setup-gradle action 直接管理 Gradle 版本并跑构建，
-      # 不依赖仓库里手写/生成的 gradle-wrapper.jar 二进制文件，
-      # 避免那个文件版本不对或损坏导致构建失败。
+      # 不依赖仓库里手写/生成的 gradle-wrapper.jar 二进制文件。
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
